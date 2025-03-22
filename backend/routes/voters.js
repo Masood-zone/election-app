@@ -11,12 +11,13 @@ const { authenticateAdmin, userToken } = require('../verification/verifyusers');
 //  Routes
 votersRouter.post(
   '/register',
-  [...voterScheme],
+  [...voterScheme.voterscheme],
   validation.checkUserExists,
+  authentication.checkEmailExists,
   voters.createVoter,
 );
 
-votersRouter.post('/login', authentication.checkEmailExists, voters.login);
+votersRouter.post('/login', [...voterScheme.voterLoginScheme], voters.login);
 
 // Admin route
 votersRouter.get('/', authenticateAdmin, voters.getAllVoters);

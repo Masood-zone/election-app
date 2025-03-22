@@ -17,7 +17,7 @@ userRouter.post(
 );
 userRouter.post('/login', authentication.userEmail, admin.login);
 
-userRouter.get('/me', verification.userToken, admin.getMe);
+userRouter.get('/profile', verification.userToken, admin.getMe);
 
 // Admin-only routes
 userRouter.get('/votes', verification.authenticateAdmin, votes.getVotes);

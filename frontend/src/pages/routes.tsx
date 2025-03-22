@@ -67,6 +67,16 @@ const rootRoutes = createBrowserRouter(
               return { Component: Login };
             }}
           />
+          {/* Admin Login page */}
+          <Route
+            path="admin/login"
+            lazy={async () => {
+              const { default: AdminLogin } = await import(
+                "@/pages/main/auth/admin-login"
+              );
+              return { Component: AdminLogin };
+            }}
+          />
         </Route>
         {/* 404 Not Found page - must be at the end */}
         <Route path="*" element={<NotFound />} />

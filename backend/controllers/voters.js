@@ -6,22 +6,28 @@ const prisma = require('../db/prisma-db');
 
 // function for voter login
 const login = async (req, res, next) => {
-  try {
-    const email = req.body.email;
-    const password = req.body.password;
+  const errors = validationResult(req);
 
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      errors: errors.array(),
+    });
+  }
+
+  try {
+    const { studentId, password } = req.body;
     const voter = await prisma.voters.findFirst({
       where: {
-        email,
+        studentId,
         password,
         del_flg: false,
       },
     });
 
     if (!voter) {
-      return res.status(422).json({
+      return res.status(404).json({
         status: 'fail',
-        message: 'Invalid credentials',
+        message: 'User Not Found',
       });
     }
 
@@ -46,7 +52,7 @@ const login = async (req, res, next) => {
 //  function for saving a voter
 const createVoter = async (req, res, next) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty) {
+  if (!errors.isEmpty()) {
     res.status(400).json({
       errors: errors.array(),
     });

@@ -9,4 +9,12 @@ const voterscheme = [
   check('password', 'password is required').notEmpty(),
 ];
 
-module.exports = voterscheme;
+const voterLoginScheme = [
+  check('studentId', 'student id is required').notEmpty(),
+  check('password', 'password is required').notEmpty(),
+];
+
+module.exports = {
+  voterscheme,
+  voterLoginScheme,
+};

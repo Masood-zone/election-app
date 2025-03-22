@@ -13,18 +13,36 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useLoginVoter } from "@/services/auth/queries";
+
+const formSchema = z.object({
+  studentId: z
+    .string()
+    .regex(/^STU\d+$/, "Student ID must start with 'STU' followed by numbers"),
+  password: z.string().min(1),
+});
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+  const { mutateAsync: loginUser, isPending } = useLoginVoter();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const data = {
+      studentId: values.studentId,
+      password: values.password,
+    };
+    await loginUser(data);
   };
 
   const containerVariants = {
@@ -93,7 +111,7 @@ export default function Login() {
                 </CardDescription>
               </motion.div>
             </CardHeader>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <CardContent className="space-y-4">
                 <motion.div className="space-y-2" variants={itemVariants}>
                   <Label htmlFor="studentId">Student ID</Label>
@@ -101,8 +119,14 @@ export default function Login() {
                     id="studentId"
                     placeholder="Enter your student ID"
                     required
+                    {...register("studentId")}
                     autoFocus
                   />
+                  {errors.studentId && (
+                    <p className="text-red-500 text-sm">
+                      {errors.studentId.message}
+                    </p>
+                  )}
                 </motion.div>
                 <motion.div className="space-y-2" variants={itemVariants}>
                   <div className="flex items-center justify-between">
@@ -119,6 +143,7 @@ export default function Login() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
+                      {...register("password")}
                       required
                     />
                     <button
@@ -148,9 +173,9 @@ export default function Login() {
                   <Button
                     className="w-full flex items-center gap-2 "
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isPending}
                   >
-                    {isLoading ? (
+                    {isPending ? (
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{
@@ -182,7 +207,7 @@ export default function Login() {
                     ) : (
                       <LogIn className="h-4 w-4" />
                     )}
-                    {isLoading ? "Logging in..." : "Login"}
+                    {isPending ? "Logging in..." : "Login"}
                   </Button>
                 </motion.div>
                 {/* <motion.div
