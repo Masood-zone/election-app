@@ -22,6 +22,7 @@ const login = async (req, res, next) => {
     } else {
       const token = signToken(user.id, user.role || 'ADMIN');
       res.status(200).json({
+        status: 'success',
         token,
         user: {
           id: user.id,

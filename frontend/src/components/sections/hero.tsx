@@ -115,23 +115,24 @@ export default function Hero() {
             >
               {isAuthenticated ? (
                 <>
-                  <Button
-                    asChild
-                    size="lg"
-                    className="bg-primary hover:bg-primary/90 flex items-center gap-2"
-                  >
-                    <Link to="/my-votes">
-                      <Vote className="h-5 w-5" />
-                      My Votes
-                    </Link>
-                  </Button>
+                  {!isAdmin && (
+                    <Button
+                      asChild
+                      size="lg"
+                      className="bg-primary hover:bg-primary/90 flex items-center gap-2"
+                    >
+                      <Link to="/my-votes">
+                        <Vote className="h-5 w-5" />
+                        My Votes
+                      </Link>
+                    </Button>
+                  )}
 
                   {isAdmin && (
                     <Button
                       asChild
                       size="lg"
-                      variant="outline"
-                      className="flex items-center gap-2"
+                      className="bg-primary hover:bg-primary/90 flex items-center gap-2"
                     >
                       <Link to="/admin/dashboard">
                         <ShieldCheck className="h-5 w-5" />

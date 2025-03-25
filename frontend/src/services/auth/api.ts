@@ -11,7 +11,7 @@ export const getVoter = async () => {
 };
 
 export const loginAdmin = async (data: AdminLoginRequest) => {
-  const response = await api.post<UserAuth>("/voters/login", {
+  const response = await api.post<UserAuth>("/admin/login", {
     studentId: data.email,
     password: data.password,
   });

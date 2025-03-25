@@ -8,6 +8,7 @@
     "start": "node server.js",
     "generate": "npx prisma generate",
     "migrate": "npx prisma migrate dev",
+    "seed": "node prisma/seed.js",
     "dev": "nodemon server.js",
     "lint": "eslint ./"
   },

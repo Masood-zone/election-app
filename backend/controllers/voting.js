@@ -107,7 +107,7 @@ const getMyVotes = async (req, res, next) => {
   }
 };
 
-// loading my votes
+// loading all votes with counts
 const getVotes = async (req, res, next) => {
   try {
     // Get vote counts grouped by position and candidate
@@ -177,7 +177,6 @@ const getVotes = async (req, res, next) => {
 };
 
 // exporting all functions
-
 module.exports = {
   addVoting,
   getVotes,

@@ -80,9 +80,7 @@ const rootRoutes = createBrowserRouter(
           <Route
             path="voter/login"
             lazy={async () => {
-              const { default: Login } = await import(
-                "@/pages/main/auth/login"
-              );
+              const { default: Login } = await import("@/pages/auth/login");
               return { Component: Login };
             }}
           />
@@ -91,7 +89,7 @@ const rootRoutes = createBrowserRouter(
             path="admin/login"
             lazy={async () => {
               const { default: AdminLogin } = await import(
-                "@/pages/main/auth/admin-login"
+                "@/pages/auth/admin-login"
               );
               return { Component: AdminLogin };
             }}
@@ -99,6 +97,21 @@ const rootRoutes = createBrowserRouter(
         </Route>
         {/* 404 Not Found page - must be at the end */}
         <Route path="*" element={<NotFound />} />
+        {/* Admin Dashboard */}
+        {/* <Route
+          path="admin"
+          lazy={async () => {
+            const { default: AdminLayout } = await import("@/pages/admin");
+            return { Component: AdminLayout };
+          }}>
+          <Route
+            index
+            lazy={async () => {
+              const { default: Dashboard } = await import("@/pages/admin/dashboard");
+              return { Component: Dashboard };
+            }}/>
+
+          </Route> */}
       </Route>
     </>
   )

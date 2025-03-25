@@ -19,9 +19,7 @@ import * as z from "zod";
 import { useLoginAdmin } from "@/services/auth/queries";
 
 const formSchema = z.object({
-  email: z
-    .string()
-    .regex(/^STU\d+$/, "Student ID must start with 'STU' followed by numbers"),
+  email: z.string(),
   password: z.string().min(1),
 });
 

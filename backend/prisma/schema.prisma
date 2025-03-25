@@ -32,6 +32,7 @@ model positions {
   updatedAt    DateTime     @updatedAt
   candidates   candidates[]
   voting       voting[]
+  elections    ElectionPosition[]
 }
 
 model candidates {
@@ -45,6 +46,8 @@ model candidates {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   voting        voting[]
+  manifesto     String?    // Candidate's election promises/platform
+  biography     String?    // Short bio of the candidate
 }
 
 model voting {
@@ -55,6 +58,9 @@ model voting {
   candidateId String? @default(uuid())  // Ensure it matches candidates.id
   voters      voters?     @relation(fields: [voterId], references: [studentId])
   voterId     String? @default(uuid())  // Ensure it matches voters.studentId
+  election    Election?   @relation(fields: [electionId], references: [id])
+  electionId  String?
+  timestamp   DateTime    @default(now())
 }
 
 model user {
@@ -66,3 +72,74 @@ model user {
   role      String @default("ADMIN")
 }
 
+model Election {
+  id              String            @id @default(uuid())
+  title           String
+  description     String?
+  startDate       DateTime
+  endDate         DateTime
+  status          ElectionStatus    @default(UPCOMING)
+  isActive        Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  positions       ElectionPosition[]
+  votes           voting[]
+  announcements   Announcement[]
+  settings        ElectionSettings?
+}
+
+enum ElectionStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+model ElectionPosition {
+  id          String    @id @default(uuid())
+  election    Election  @relation(fields: [electionId], references: [id])
+  electionId  String
+  position    positions @relation(fields: [positionId], references: [id])
+  positionId  String
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([electionId, positionId])
+}
+
+model ElectionSettings {
+  id                  String    @id @default(uuid())
+  election            Election  @relation(fields: [electionId], references: [id])
+  electionId          String    @unique
+  allowMultipleVotes  Boolean   @default(false)  // Can a voter vote multiple times?
+  resultsVisibility   String    @default("AFTER_END")  // Options: REAL_TIME, AFTER_END, ADMIN_ONLY
+  requireVerification Boolean   @default(true)   // Require voter verification?
+  allowAbstention     Boolean   @default(false)  // Allow voters to abstain?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Announcement {
+  id          String    @id @default(uuid())
+  election    Election  @relation(fields: [electionId], references: [id])
+  electionId  String
+  title       String
+  content     String
+  isPublished Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Analytics {
+  id                String   @id @default(uuid())
+  date              DateTime @default(now())
+  totalVoters       Int      @default(0)
+  totalCandidates   Int      @default(0)
+  totalPositions    Int      @default(0)
+  activeElections   Int      @default(0)
+  completedElections Int     @default(0)
+  totalVotesCast    Int      @default(0)
+  voterTurnout      Float    @default(0)  // Percentage
+  createdAt         DateTime @default(now())
+}
