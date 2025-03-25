@@ -7,6 +7,7 @@ import RootLayout from "./root.layout";
 import Layout from "@/components/layout/layout";
 import NotFound from "./error/not-found";
 import ErrorPage from "./error/error-page";
+import { UserAccountProtected } from "./protected.routes";
 
 const rootRoutes = createBrowserRouter(
   createRoutesFromElements(
@@ -95,55 +96,57 @@ const rootRoutes = createBrowserRouter(
             }}
           />
           {/* Voter Dashboard */}
-          <Route
-            path="voter"
-            lazy={async () => {
-              const { default: SettingsLayout } = await import(
-                "@/pages/main/account"
-              );
-              return { Component: SettingsLayout };
-            }}
-          >
+          <Route element={<UserAccountProtected />}>
             <Route
-              index
+              path="voter"
               lazy={async () => {
-                const { default: Settings } = await import(
-                  "@/pages/main/account/settings"
+                const { default: SettingsLayout } = await import(
+                  "@/pages/main/account"
                 );
-                return { Component: Settings };
+                return { Component: SettingsLayout };
               }}
-            />
-            {/* My Votes */}
-            <Route
-              path="my-votes"
-              lazy={async () => {
-                const { default: MyVotes } = await import(
-                  "@/pages/main/account/my-votes"
-                );
-                return { Component: MyVotes };
-              }}
-            />
-            {/* Profile */}
-            <Route
-              path="profile"
-              lazy={async () => {
-                const { default: Profile } = await import(
-                  "@/pages/main/account/profile"
-                );
-                return { Component: Profile };
-              }}
-            />
-            {/* Preferences */}
-            <Route
-              path="preferences"
-              lazy={async () => {
-                const { default: Preferences } = await import(
-                  "@/pages/main/account/preferences"
-                );
-                return { Component: Preferences };
-              }}
-            />
-            <Route path="*" element={<NotFound />} />
+            >
+              <Route
+                index
+                lazy={async () => {
+                  const { default: Settings } = await import(
+                    "@/pages/main/account/settings"
+                  );
+                  return { Component: Settings };
+                }}
+              />
+              {/* My Votes */}
+              <Route
+                path="my-votes"
+                lazy={async () => {
+                  const { default: MyVotes } = await import(
+                    "@/pages/main/account/my-votes"
+                  );
+                  return { Component: MyVotes };
+                }}
+              />
+              {/* Profile */}
+              <Route
+                path="profile"
+                lazy={async () => {
+                  const { default: Profile } = await import(
+                    "@/pages/main/account/profile"
+                  );
+                  return { Component: Profile };
+                }}
+              />
+              {/* Preferences */}
+              <Route
+                path="preferences"
+                lazy={async () => {
+                  const { default: Preferences } = await import(
+                    "@/pages/main/account/preferences"
+                  );
+                  return { Component: Preferences };
+                }}
+              />
+              <Route path="*" element={<NotFound />} />
+            </Route>
           </Route>
         </Route>
         {/* 404 Not Found page - must be at the end */}
