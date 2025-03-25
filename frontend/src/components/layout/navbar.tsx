@@ -31,7 +31,7 @@ export default function Navbar() {
   ];
 
   const authenticatedLinks = isAuthenticated
-    ? [...navLinks, { name: "My Votes", href: "/my-votes" }]
+    ? [...navLinks, { name: "My Votes", href: "/voter/my-votes" }]
     : navLinks;
 
   return (
@@ -128,14 +128,14 @@ export default function Navbar() {
                   </div>
                 </div>
                 <Link
-                  to="/profile"
+                  to="/voter/profile"
                   className="block py-2 text-sm font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Profile
                 </Link>
                 <Link
-                  to="/settings"
+                  to="/voter"
                   className="block py-2 text-sm font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

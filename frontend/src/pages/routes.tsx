@@ -94,24 +94,60 @@ const rootRoutes = createBrowserRouter(
               return { Component: AdminLogin };
             }}
           />
+          {/* Voter Dashboard */}
+          <Route
+            path="voter"
+            lazy={async () => {
+              const { default: SettingsLayout } = await import(
+                "@/pages/main/account"
+              );
+              return { Component: SettingsLayout };
+            }}
+          >
+            <Route
+              index
+              lazy={async () => {
+                const { default: Settings } = await import(
+                  "@/pages/main/account/settings"
+                );
+                return { Component: Settings };
+              }}
+            />
+            {/* My Votes */}
+            <Route
+              path="my-votes"
+              lazy={async () => {
+                const { default: MyVotes } = await import(
+                  "@/pages/main/account/my-votes"
+                );
+                return { Component: MyVotes };
+              }}
+            />
+            {/* Profile */}
+            <Route
+              path="profile"
+              lazy={async () => {
+                const { default: Profile } = await import(
+                  "@/pages/main/account/profile"
+                );
+                return { Component: Profile };
+              }}
+            />
+            {/* Preferences */}
+            <Route
+              path="preferences"
+              lazy={async () => {
+                const { default: Preferences } = await import(
+                  "@/pages/main/account/preferences"
+                );
+                return { Component: Preferences };
+              }}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Route>
         {/* 404 Not Found page - must be at the end */}
         <Route path="*" element={<NotFound />} />
-        {/* Admin Dashboard */}
-        {/* <Route
-          path="admin"
-          lazy={async () => {
-            const { default: AdminLayout } = await import("@/pages/admin");
-            return { Component: AdminLayout };
-          }}>
-          <Route
-            index
-            lazy={async () => {
-              const { default: Dashboard } = await import("@/pages/admin/dashboard");
-              return { Component: Dashboard };
-            }}/>
-
-          </Route> */}
       </Route>
     </>
   )

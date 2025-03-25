@@ -64,7 +64,7 @@ export default function UserProfileMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link
-            to="/profile"
+            to="/voter/profile"
             className="cursor-pointer flex w-full items-center"
           >
             <User className="mr-2 h-4 w-4" />
@@ -72,10 +72,7 @@ export default function UserProfileMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link
-            to="/settings"
-            className="cursor-pointer flex w-full items-center"
-          >
+          <Link to="/voter" className="cursor-pointer flex w-full items-center">
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
           </Link>

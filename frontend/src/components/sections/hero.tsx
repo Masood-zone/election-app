@@ -121,7 +121,7 @@ export default function Hero() {
                       size="lg"
                       className="bg-primary hover:bg-primary/90 flex items-center gap-2"
                     >
-                      <Link to="/my-votes">
+                      <Link to="/voter/my-votes">
                         <Vote className="h-5 w-5" />
                         My Votes
                       </Link>
