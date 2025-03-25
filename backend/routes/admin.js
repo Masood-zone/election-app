@@ -12,8 +12,6 @@ const userScheme = require('../schemes/userscheme');
 const validation = require('../validation/user');
 const votes = require('../controllers/voting');
 
-// Protect all admin routes
-adminRouter.use(verification.authenticateAdmin);
 adminRouter.post(
   '/register',
   [...userScheme],
@@ -23,6 +21,8 @@ adminRouter.post(
 adminRouter.post('/login', authentication.userEmail, admin.login);
 adminRouter.get('/profile', verification.userToken, admin.getMe);
 
+// Protect all admin routes
+adminRouter.use(verification.authenticateAdmin);
 // Dashboard routes
 adminRouter.get('/dashboard', dashboardController.getDashboardAnalytics);
 adminRouter.get(
