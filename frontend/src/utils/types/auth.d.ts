@@ -18,9 +18,11 @@ interface Voter {
 interface AdminAuth {
   status: string;
   token: string;
-  user: Pick<User, "id" | "fullName" | "email" | "role"> & {
-    studentId: string;
-    studentName: string;
+  user: {
+    id: string;
+    fullName: string;
+    email: string;
+    role: string;
   };
 }
 

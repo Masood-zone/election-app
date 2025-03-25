@@ -129,7 +129,7 @@ export default function CallToAction() {
                 variant="outline"
                 className="bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10"
               >
-                <Link to="/learn-more">Learn More</Link>
+                <Link to="/#!">Learn More</Link>
               </Button>
             </motion.div>
           </motion.div>

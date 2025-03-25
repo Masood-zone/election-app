@@ -9,7 +9,8 @@ const verification = require('../verification/verifytoken');
 const authenticateUser = require('../verification/verifyusers');
 
 // load all candidates
-votingRouter.get('/candidates', candidate.getAllCandidates);
+votingRouter.get('/candidates', candidate.getCandidatesList);
+votingRouter.get('/candidates/:id', candidate.getSingleCandidateFunc);
 
 // get my votes
 votingRouter.get('/my-votes', authenticateUser.userToken, votes.getMyVotes);

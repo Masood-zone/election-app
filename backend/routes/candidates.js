@@ -23,6 +23,7 @@ candidateRouter.post(
 );
 
 //  all crud routes
+candidateRouter.get('/list', candidate.getCandidatesList);
 candidateRouter.get('/', candidate.getAllCandidates);
 // get candidate by id
 candidateRouter.get('/:id', candidate.getSingleCandidateFunc);

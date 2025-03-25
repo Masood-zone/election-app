@@ -33,12 +33,31 @@ const rootRoutes = createBrowserRouter(
           <Route
             path="candidates"
             lazy={async () => {
-              const { default: Candidates } = await import(
+              const { default: CandidatesLayout } = await import(
                 "@/pages/main/candidates"
               );
-              return { Component: Candidates };
+              return { Component: CandidatesLayout };
             }}
-          />
+          >
+            <Route
+              index
+              lazy={async () => {
+                const { default: Candidates } = await import(
+                  "@/pages/main/candidates/candidates"
+                );
+                return { Component: Candidates };
+              }}
+            />
+            <Route
+              path=":id"
+              lazy={async () => {
+                const { default: CandidateDetails } = await import(
+                  "@/pages/main/candidates/candidate-details"
+                );
+                return { Component: CandidateDetails };
+              }}
+            />
+          </Route>
           {/* Positions page */}
           <Route
             path="positions"

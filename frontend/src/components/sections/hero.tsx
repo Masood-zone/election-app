@@ -2,12 +2,15 @@ import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, useAnimation, useInView } from "framer-motion";
 import { Button } from "../ui/button";
+import { useAuthStore } from "@/store/auth.store";
+import { Badge } from "@/components/ui/badge";
+import { Vote, ShieldCheck } from "lucide-react";
 
 export default function Hero() {
   const controls = useAnimation();
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: false, amount: 0.3 });
-
+  const { isAuthenticated, isAdmin, user } = useAuthStore();
   useEffect(() => {
     if (isInView) {
       controls.start("visible");
@@ -75,6 +78,28 @@ export default function Hero() {
             variants={containerVariants}
           >
             <motion.div className="space-y-2" variants={itemVariants}>
+              {isAuthenticated && (
+                <div className="mb-4 flex items-center gap-2">
+                  {isAdmin ? (
+                    <Badge
+                      variant="outline"
+                      className="px-3 py-1 border-primary/50 bg-primary/10 text-primary flex items-center gap-1.5"
+                    >
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                      <span>Admin Dashboard</span>
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="px-3 py-1">
+                      Welcome,{" "}
+                      {user &&
+                        ("studentName" in user
+                          ? user.studentName
+                          : user.fullName)}
+                    </Badge>
+                  )}
+                </div>
+              )}
+
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
                 Your Voice Matters at Epicurious Institute
               </h1>
@@ -85,19 +110,58 @@ export default function Hero() {
               </p>
             </motion.div>
             <motion.div
-              className="flex flex-col gap-2 min-[400px]:flex-row"
+              className="flex flex-col gap-2 min-[400px]:flex-row flex-wrap"
               variants={itemVariants}
             >
-              <Button
-                asChild
-                size="lg"
-                className="bg-primary hover:bg-primary/90"
-              >
-                <Link to="/register">Register to Vote</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to="/candidates">View Candidates</Link>
-              </Button>
+              {isAuthenticated ? (
+                <>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 flex items-center gap-2"
+                  >
+                    <Link to="/my-votes">
+                      <Vote className="h-5 w-5" />
+                      My Votes
+                    </Link>
+                  </Button>
+
+                  {isAdmin && (
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      <Link to="/admin/dashboard">
+                        <ShieldCheck className="h-5 w-5" />
+                        Admin Dashboard
+                      </Link>
+                    </Button>
+                  )}
+
+                  <Button
+                    asChild
+                    size="lg"
+                    variant={isAdmin ? "secondary" : "outline"}
+                  >
+                    <Link to="/candidates">View Candidates</Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    <Link to="/voter/login">Login to Vote</Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline">
+                    <Link to="/candidates">View Candidates</Link>
+                  </Button>
+                </>
+              )}
             </motion.div>
           </motion.div>
           <motion.img
