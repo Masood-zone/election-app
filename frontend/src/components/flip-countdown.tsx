@@ -1,136 +1,99 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 
-interface TimeUnit {
-  value: number;
-  label: string;
-}
-
-interface CountdownProps {
+interface FlipCountdownProps {
   targetDate: Date;
   className?: string;
+}
+
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
 export default function FlipCountdown({
   targetDate,
   className = "",
-}: CountdownProps) {
-  const [timeLeft, setTimeLeft] = useState<TimeUnit[]>([
-    { value: 0, label: "Months" },
-    { value: 0, label: "Days" },
-    { value: 0, label: "Hours" },
-    { value: 0, label: "Minutes" },
-    { value: 0, label: "Seconds" },
-  ]);
-
-  // Removed unused prevTimeLeft state
+}: FlipCountdownProps) {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const now = new Date();
-      const difference = targetDate.getTime() - now.getTime();
+      const difference = +targetDate - +new Date();
 
       if (difference <= 0) {
-        return [
-          { value: 0, label: "Months" },
-          { value: 0, label: "Days" },
-          { value: 0, label: "Hours" },
-          { value: 0, label: "Minutes" },
-          { value: 0, label: "Seconds" },
-        ];
+        return {
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        };
       }
 
-      // Calculate months, days, hours, minutes, seconds
-      const months = Math.floor(difference / (1000 * 60 * 60 * 24 * 30.44));
-      const days = Math.floor((difference / (1000 * 60 * 60 * 24)) % 30.44);
-      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((difference / (1000 * 60)) % 60);
-      const seconds = Math.floor((difference / 1000) % 60);
-
-      return [
-        { value: months, label: "Months" },
-        { value: days, label: "Days" },
-        { value: hours, label: "Hours" },
-        { value: minutes, label: "Minutes" },
-        { value: seconds, label: "Seconds" },
-      ];
+      return {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
     };
 
-    // Update time left initially
+    // Initial calculation
     setTimeLeft(calculateTimeLeft());
 
-    // Update time left every second
+    // Update every second
     const timer = setInterval(() => {
-      // Removed setPrevTimeLeft as prevTimeLeft is no longer used
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
+    // Clean up
     return () => clearInterval(timer);
-  }, [targetDate, timeLeft]);
+  }, [targetDate]);
+
+  const formatNumber = (num: number): string => {
+    return num.toString().padStart(2, "0");
+  };
 
   return (
-    <div
-      className={`flex flex-wrap justify-center gap-2 md:gap-4 ${className}`}
-    >
-      {timeLeft.map((unit) => (
-        <div key={unit.label} className="flex flex-col items-center">
-          <div className="relative h-16 w-16 md:h-20 md:w-20 overflow-hidden rounded-lg bg-primary-foreground/20 shadow-lg">
-            <AnimatePresence mode="popLayout">
-              <motion.div
-                key={unit.value}
-                initial={{
-                  opacity: 0,
-                  rotateX: -90,
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                }}
-                animate={{
-                  opacity: 1,
-                  rotateX: 0,
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                }}
-                exit={{
-                  opacity: 0,
-                  rotateX: 90,
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30,
-                  duration: 0.4,
-                }}
-                style={{ transformOrigin: "bottom center" }}
-                className="flex items-center justify-center"
-              >
-                <span className="text-2xl md:text-3xl font-bold text-primary-foreground">
-                  {unit.value.toString().padStart(2, "0")}
-                </span>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Divider line */}
-            <div className="absolute left-0 top-1/2 w-full h-[1px] bg-primary-foreground/20"></div>
-
-            {/* Reflection effect */}
-            <div className="absolute left-0 top-0 w-full h-1/2 bg-primary-foreground/5"></div>
-          </div>
-          <span className="mt-1 text-xs text-primary-foreground/70">
-            {unit.label}
+    <div className={`flex justify-center gap-2 md:gap-4 ${className}`}>
+      <div className="flex flex-col items-center">
+        <div className="bg-primary-foreground/10 rounded-lg p-2 md:p-3 w-16 md:w-20 text-center">
+          <span className="text-2xl md:text-3xl font-mono font-bold">
+            {formatNumber(timeLeft.days)}
           </span>
         </div>
-      ))}
+        <span className="text-xs mt-1 text-primary-foreground/70">Days</span>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="bg-primary-foreground/10 rounded-lg p-2 md:p-3 w-16 md:w-20 text-center">
+          <span className="text-2xl md:text-3xl font-mono font-bold">
+            {formatNumber(timeLeft.hours)}
+          </span>
+        </div>
+        <span className="text-xs mt-1 text-primary-foreground/70">Hours</span>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="bg-primary-foreground/10 rounded-lg p-2 md:p-3 w-16 md:w-20 text-center">
+          <span className="text-2xl md:text-3xl font-mono font-bold">
+            {formatNumber(timeLeft.minutes)}
+          </span>
+        </div>
+        <span className="text-xs mt-1 text-primary-foreground/70">Minutes</span>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="bg-primary-foreground/10 rounded-lg p-2 md:p-3 w-16 md:w-20 text-center">
+          <span className="text-2xl md:text-3xl font-mono font-bold">
+            {formatNumber(timeLeft.seconds)}
+          </span>
+        </div>
+        <span className="text-xs mt-1 text-primary-foreground/70">Seconds</span>
+      </div>
     </div>
   );
 }

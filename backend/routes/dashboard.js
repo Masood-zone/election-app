@@ -12,6 +12,10 @@ dashboardRouter.get(
   '/elections/:electionId/announcements',
   announcementController.getAnnouncementsByElection,
 );
+dashboardRouter.get(
+  '/announcements',
+  announcementController.getAllAnnouncements,
+);
 
 // Protected routes (require authentication)
 dashboardRouter.use(verifyToken);

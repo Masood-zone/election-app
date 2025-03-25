@@ -156,8 +156,54 @@ const deleteAnnouncement = async (req, res, next) => {
   }
 };
 
+// Get all published announcements
+const getAllAnnouncements = async (req, res, next) => {
+  try {
+    const { includeUnpublished } = req.query;
+    const isAdmin = req.user && req.user.isAdmin;
+
+    // Build query conditions
+    const where = {};
+
+    // Only admins should see unpublished announcements
+    if ((!includeUnpublished || includeUnpublished !== 'true') && !isAdmin) {
+      where.isPublished = true;
+    }
+
+    // Get announcements with election details
+    const announcements = await prisma.announcement.findMany({
+      where,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        election: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            startDate: true,
+            endDate: true,
+            status: true,
+            isActive: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: announcements,
+    });
+  } catch (error) {
+    console.error('Error fetching all announcements:', error);
+    next(new HttpException(500, error.message));
+  }
+};
+
 // Export all functions
 module.exports = {
+  getAllAnnouncements,
   createAnnouncement,
   getAnnouncementsByElection,
   updateAnnouncement,
