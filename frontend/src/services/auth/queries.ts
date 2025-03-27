@@ -89,8 +89,8 @@ export const useLoginAdmin = (redirect: string) => {
           message: `Login successful ${status}`,
         },
       });
-      if (redirect) {
-        navigate("/" + redirect);
+      if (redirect === "") {
+        navigate("/admin/dashboard");
       } else {
         navigate("/admin/dashboard");
       }
