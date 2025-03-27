@@ -73,7 +73,7 @@ export const useLoginVoter = () => {
   });
 };
 
-export const useLoginAdmin = () => {
+export const useLoginAdmin = (redirect: string) => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
   return useMutation({
@@ -89,7 +89,11 @@ export const useLoginAdmin = () => {
           message: `Login successful ${status}`,
         },
       });
-      navigate("/admin/dashboard");
+      if (redirect) {
+        navigate("/" + redirect);
+      } else {
+        navigate("/admin/dashboard");
+      }
     },
     onError: (error: AxiosError) => {
       const statusCode = error?.response?.status;

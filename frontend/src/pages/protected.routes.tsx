@@ -1,12 +1,15 @@
 import { useAuthStore } from "@/store/auth.store";
 import { Navigate, Outlet } from "react-router-dom";
 
-export const ProtectedRoute = () => {
-  const { isAuthenticated } = useAuthStore();
+export const AdminProtectedRoute = () => {
+  const { isAuthenticated, isAdmin } = useAuthStore();
 
   // If not authenticated, redirect to login
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
+  }
+  if (!isAdmin) {
+    return <Navigate to={`/admin/login?redirect=admin/dashboard`} replace />;
   }
 
   // Render the protected content

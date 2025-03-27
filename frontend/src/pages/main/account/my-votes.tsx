@@ -36,7 +36,7 @@ export default function MyVotes() {
     },
   };
 
-  const item = {
+  const item: { hidden: { opacity: 0; y: 20 }; show: { opacity: 1; y: 0 } } = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 },
   };
@@ -116,15 +116,25 @@ export default function MyVotes() {
           <TabsTrigger value="all" className="flex-shrink-0">
             All Votes ({data.totalVotes})
           </TabsTrigger>
-          {data.elections.map((election) => (
-            <TabsTrigger
-              key={election.election.id}
-              value={election.election.id}
-              className="flex-shrink-0"
-            >
-              {election.election.title} ({election.votes.length})
-            </TabsTrigger>
-          ))}
+          {data.elections.map(
+            (election: {
+              election: { id: string; title: string };
+              votes: {
+                id: string;
+                candidate: { name: string; profile?: string };
+                position: { name: string; description?: string };
+                votedAt: string;
+              }[];
+            }) => (
+              <TabsTrigger
+                key={election.election.id}
+                value={election.election.id}
+                className="flex-shrink-0"
+              >
+                {election.election.title} ({election.votes.length})
+              </TabsTrigger>
+            )
+          )}
         </TabsList>
 
         <TabsContent value="all" className="mt-6">
@@ -134,49 +144,84 @@ export default function MyVotes() {
             initial="hidden"
             animate="show"
           >
-            {data.elections.flatMap((election) =>
-              election.votes.map((vote) => (
-                <VoteCard
-                  key={vote.id}
-                  vote={vote}
-                  electionTitle={election.election.title}
-                  item={item}
-                />
-              ))
+            {data.elections.flatMap(
+              (election: {
+                election: { id: string; title: string };
+                votes: {
+                  id: string;
+                  candidate: { name: string; profile?: string };
+                  position: { name: string; description?: string };
+                  votedAt: string;
+                }[];
+              }) =>
+                election.votes.map((vote) => (
+                  <VoteCard
+                    key={vote.id}
+                    vote={vote}
+                    electionTitle={election.election.title}
+                    item={item}
+                  />
+                ))
             )}
           </motion.div>
         </TabsContent>
 
-        {data.elections.map((election) => (
-          <TabsContent
-            key={election.election.id}
-            value={election.election.id}
-            className="mt-6"
-          >
-            <motion.div
-              className="grid gap-6 md:grid-cols-2"
-              variants={container}
-              initial="hidden"
-              animate="show"
+        {data.elections.map(
+          (election: {
+            election: { id: string; title: string };
+            votes: {
+              id: string;
+              candidate: { name: string; profile?: string };
+              position: { name: string; description?: string };
+              votedAt: string;
+            }[];
+          }) => (
+            <TabsContent
+              key={election.election.id}
+              value={election.election.id}
+              className="mt-6"
             >
-              {election.votes.map((vote) => (
-                <VoteCard
-                  key={vote.id}
-                  vote={vote}
-                  electionTitle={election.election.title}
-                  item={item}
-                />
-              ))}
-            </motion.div>
-          </TabsContent>
-        ))}
+              <motion.div
+                className="grid gap-6 md:grid-cols-2"
+                variants={container}
+                initial="hidden"
+                animate="show"
+              >
+                {election.votes.map((vote) => (
+                  <VoteCard
+                    key={vote.id}
+                    vote={vote}
+                    electionTitle={election.election.title}
+                    item={item}
+                  />
+                ))}
+              </motion.div>
+            </TabsContent>
+          )
+        )}
       </Tabs>
     </div>
   );
 }
 
-function VoteCard({ vote, electionTitle, item }) {
-  const formatDate = (dateString) => {
+function VoteCard({
+  vote,
+  electionTitle,
+  item,
+}: {
+  vote: {
+    id: string;
+    candidate: { name: string; profile?: string };
+    position: { name: string; description?: string };
+    votedAt: string;
+  };
+  electionTitle: string;
+  item: {
+    hidden: { opacity: 0; y: 20 };
+    show: { opacity: 1; y: 0 };
+  };
+}) {
+  const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
       return {
@@ -184,6 +229,8 @@ function VoteCard({ vote, electionTitle, item }) {
         relative: formatDistanceToNow(date, { addSuffix: true }),
       };
     } catch (e) {
+      console.log(e);
+
       return {
         formatted: "Unknown date",
         relative: "",

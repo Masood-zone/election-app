@@ -7,7 +7,7 @@ import RootLayout from "./root.layout";
 import Layout from "@/components/layout/layout";
 import NotFound from "./error/not-found";
 import ErrorPage from "./error/error-page";
-import { UserAccountProtected } from "./protected.routes";
+import { AdminProtectedRoute, UserAccountProtected } from "./protected.routes";
 
 const rootRoutes = createBrowserRouter(
   createRoutesFromElements(
@@ -147,6 +147,31 @@ const rootRoutes = createBrowserRouter(
               />
               <Route path="*" element={<NotFound />} />
             </Route>
+          </Route>
+        </Route>
+        {/* Admin Dashboard */}
+        <Route element={<AdminProtectedRoute />}>
+          <Route
+            path="admin"
+            lazy={async () => {
+              const { default: AdminLayout } = await import(
+                "@/pages/admin/pages/layout"
+              );
+              return { Component: AdminLayout };
+            }}
+          >
+            {/* Dashboard */}
+            <Route
+              path="dashboard"
+              lazy={async () => {
+                const { default: Dashboard } = await import(
+                  "@/pages/admin/pages/dashboard/dashboard"
+                );
+                return { Component: Dashboard };
+              }}
+            />
+            {/*  */}
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
         {/* 404 Not Found page - must be at the end */}

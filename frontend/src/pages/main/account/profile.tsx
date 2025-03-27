@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,7 +23,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "react-toastify";
 import { AlertCircle, User } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -43,46 +41,26 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export default function Profile() {
   const { data: userData, isLoading, error } = useGetVoter();
-  const updateProfileMutation = useUpdateProfile();
-  const [isEditing, setIsEditing] = useState(false);
+  const { mutateAsync: updateProfile, isPending } = useUpdateProfile();
 
   // Initialize form with user data
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      studentName: "",
-      email: "",
-      telephone: "",
+      studentName: userData?.studentName || "",
+      email: userData?.email || "",
+      telephone: userData?.telephone || "",
     },
   });
 
-  // Update form values when user data is loaded
-  useEffect(() => {
-    if (userData) {
-      form.reset({
-        studentName: userData.studentName || "",
-        email: userData.email || "",
-        telephone: userData.telephone || "",
-      });
-    }
-  }, [userData, form]);
-
   // Handle form submission
   function onSubmit(data: ProfileFormValues) {
-    if (!userData?.voter?.studentId) return;
+    if (!userData?.studentId) return;
 
-    updateProfileMutation.mutate(
-      {
-        studentId: userData.voter.studentId,
-        ...data,
-      },
-      {
-        onSuccess: () => {
-          setIsEditing(false);
-          toast.success("Profile updated successfully");
-        },
-      }
-    );
+    updateProfile({
+      studentId: userData.studentId,
+      ...data,
+    });
   }
 
   if (isLoading) {
@@ -157,8 +135,9 @@ export default function Profile() {
                     <FormControl>
                       <Input
                         {...field}
-                        disabled={!isEditing || updateProfileMutation.isPending}
+                        type="studentname"
                         placeholder="Your full name"
+                        disabled={isPending}
                       />
                     </FormControl>
                     <FormMessage />
@@ -176,7 +155,7 @@ export default function Profile() {
                       <Input
                         {...field}
                         type="email"
-                        disabled={!isEditing || updateProfileMutation.isPending}
+                        disabled={isPending}
                         placeholder="Your email address"
                       />
                     </FormControl>
@@ -194,7 +173,7 @@ export default function Profile() {
                     <FormControl>
                       <Input
                         {...field}
-                        disabled={!isEditing || updateProfileMutation.isPending}
+                        disabled={isPending}
                         placeholder="Your phone number"
                       />
                     </FormControl>
@@ -213,38 +192,8 @@ export default function Profile() {
                 </FormDescription>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-between border-t px-6 py-4">
-              {isEditing ? (
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsEditing(false);
-                      form.reset({
-                        studentName: userData?.studentName || "",
-                        email: userData?.email || "",
-                        telephone: userData?.telephone || "",
-                      });
-                    }}
-                    disabled={updateProfileMutation.isPending}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={updateProfileMutation.isPending}
-                  >
-                    {updateProfileMutation.isPending
-                      ? "Saving..."
-                      : "Save Changes"}
-                  </Button>
-                </div>
-              ) : (
-                <Button type="button" onClick={() => setIsEditing(true)}>
-                  Edit Profile
-                </Button>
-              )}
+            <CardFooter className="flex justify-between border-t px-6 py-2 mt-2">
+              <Button type="submit">Edit Profile</Button>
             </CardFooter>
           </form>
         </Form>

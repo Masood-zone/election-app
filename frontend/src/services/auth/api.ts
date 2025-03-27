@@ -6,8 +6,8 @@ export const getAdmin = async () => {
 };
 
 export const getVoter = async () => {
-  const response = await api.get<UserAuth>("/voters/profile");
-  return response.data;
+  const response = await api.get<VoterAuth>("/voters/profile");
+  return response.data?.voter;
 };
 
 export const loginAdmin = async (data: AdminLoginRequest) => {

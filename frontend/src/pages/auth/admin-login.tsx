@@ -24,6 +24,9 @@ const formSchema = z.object({
 });
 
 export default function AdminLogin() {
+  const redirectQuery =
+    new URLSearchParams(location.search).get("redirect") || "/admin/dashboard";
+
   const {
     register,
     handleSubmit,
@@ -32,7 +35,7 @@ export default function AdminLogin() {
     resolver: zodResolver(formSchema),
   });
 
-  const { mutateAsync: loginAdmin, isPending } = useLoginAdmin();
+  const { mutateAsync: loginAdmin, isPending } = useLoginAdmin(redirectQuery);
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

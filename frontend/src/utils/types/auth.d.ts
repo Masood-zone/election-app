@@ -34,6 +34,18 @@ interface UserAuth {
     studentName: string;
     email: string;
     role: string;
+    telephone: string;
+  };
+}
+
+interface VoterAuth {
+  status: string;
+  token: string;
+  voter: {
+    studentId: string;
+    studentName: string;
+    email: string;
+    role: string;
   };
 }
 
@@ -68,7 +80,7 @@ interface VoterRegisterRequest {
 // Auth store state
 interface AuthState {
   token: string | null;
-  user: (AdminAuth["user"] | UserAuth["user"]) | null;
+  user: (AdminAuth["user"] | VoterAuth["user"]) | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   // Actions
